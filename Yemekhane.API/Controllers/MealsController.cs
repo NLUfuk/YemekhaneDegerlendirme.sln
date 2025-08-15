@@ -77,26 +77,6 @@ namespace Yemekhane.API.Controllers
             return NoContent();
         }
 
-        //// Yemek puanlama
-        //[HttpPost("{id}/rate")]
-        //public IActionResult Rate(int id, RateMealDto dto)
-        //{
-        //    int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        //    if (!_meals.RateMeal(id, userId, dto.Score, string.Empty)) // Pass an empty string for the required 'comment' parameter
-        //        return BadRequest("Puan 1-5 olmalı.");
-
-        //    var avg = _meals.GetMealAverageRating(id);
-        //    return Ok(new { MealId = id, NewAverageRating = avg });
-        //}
-
-        //[HttpPost]                                     //rating create ihtiyaç var mı
-        //public IActionResult Create([FromBody] RatingCreateDto dto)
-        //{
-        //    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-        //    var ok = _service.RateMeal(dto.MealId, userId, dto.Rating, dto.Comment);
-        //    if (!ok) return Conflict("Bu kullanıcı bu yemeği zaten oylamış.");
-        //    return NoContent();
-        //}
 
     }
 
