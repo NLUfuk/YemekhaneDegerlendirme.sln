@@ -41,19 +41,7 @@ public class MealRepository : IMealRepository
     //  Güncelle
     public void Update(Meal meal)
     {
-        //var existingMeal = _context.Meals.FirstOrDefault(m => m.Id == meal.Id);
-        //if (existingMeal == null) return false;
-
-        //// Sadece dolu alanları güncelle
-        //if (!string.IsNullOrWhiteSpace(meal.Name))
-        //    existingMeal.Name = meal.Name;
-
-        //if (DateTime.Now!=meal.Date)
-        //    existingMeal.Date = meal.Date;
-
-
-        //_context.SaveChanges();
-        //return true;
+        
         
    
         _context.Meals.Update(meal);
@@ -72,5 +60,10 @@ public class MealRepository : IMealRepository
         _context.Meals.Remove(entity);
         _context.SaveChanges();
         return true;
+    }
+
+    public bool ExistsByNameAndDate(string name, DateTime date)
+    {
+        return _context.Meals.Any(m => m.Name == name && m.Date == date);
     }
 }

@@ -1,32 +1,40 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using Yemekhane.Business.Common;
 using Yemekhane.Business.DTOs;
 using Yemekhane.Business.Services.Interfaces;
+
 
 namespace Yemekhane.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class MealsController : ControllerBase
+    public class MealsController(IMealService meals, INotificationContext notify) : ControllerBase
     {
-        private readonly IMealService _meals;
-        public MealsController(IMealService meals) => _meals = meals;
+        private readonly IMealService _meals = meals;
+        private readonly INotificationContext _notify = notify;
 
         // Haftalık menü
         [HttpGet("weekly")]
         public IActionResult Weekly()
         {
-            var list = _meals.GetWeeklyMenu()
-                .Select(m => new {
-                    m.Id,
-                    m.Name,
-                    m.Date,
-                    AverageRating = _meals.GetMealAverageRating(m.Id)
-                });
-            return Ok(list);
+            var data = _meals.GetWeeklyMenu();
+            var response = new
+            {
+                success = !_notify.HasErrors,
+                data,
+                notifications = _notify.All.Select(n => new
+                {
+                    type = n.Type.ToString().ToLower(),
+                    code = n.Code,
+                    message = n.Message,
+                    //field = n.Field
+                })
+            };
+            return Ok(response);
         }
+
 
         // Tek yemek detayı
         [HttpGet("{id}")]
@@ -67,14 +75,23 @@ namespace Yemekhane.API.Controllers
             return NoContent();
         }
 
-
-        [HttpPost("{id:int}/rate")]
-        public IActionResult Rate(int id, [FromBody] RateMealDto dto)   // body yerine dto)
+        [HttpPost("{mealId}/rate")]
+        public IActionResult Rate(int mealId, [FromBody] RatingDto dto)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
-            var ok = _meals.RateMeal(id, userId, dto.Score, string.Empty);
-            if (!ok) return Conflict("Bu kullanıcı bu yemeği zaten oylamış.");
-            return NoContent();
+            var ok = _meals.RateMeal(mealId, /*UserId()*/ dto.UserId, dto.Score, dto.Comment);
+            var response = new
+            {
+                success = ok && !_notify.HasErrors,
+                data = new { ok },
+                notifications = _notify.All.Select(n => new
+                {
+                    type = n.Type.ToString().ToLower(),
+                    code = n.Code,
+                    message = n.Message,
+
+                })
+            };
+            return (ok && !_notify.HasErrors) ? Ok(response) : UnprocessableEntity(response);
         }
 
 

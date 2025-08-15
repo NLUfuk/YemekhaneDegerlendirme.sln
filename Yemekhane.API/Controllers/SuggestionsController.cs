@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using Yemekhane.Business.DTOs;
 using Yemekhane.Business.Services.Interfaces;
 using Yemekhane.Entities;
@@ -25,8 +23,7 @@ namespace Yemekhane.API.Controllers
             return NoContent();
         }
 
-        // ✅ İstatistik
-        // /api/suggestions/stats?from=2025-08-01&to=2025-08-31
+        
         [HttpGet("stats")]
         public ActionResult<IEnumerable<SuggestionStatDto>> Stats([FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
             => Ok(_svc.GetSuggestionStats(from, to));

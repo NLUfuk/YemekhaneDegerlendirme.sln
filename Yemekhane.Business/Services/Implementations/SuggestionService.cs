@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Yemekhane.Business.DTOs;
 using Yemekhane.Business.Services.Interfaces;
 using Yemekhane.Data;                 // AppDbContext
@@ -48,10 +45,10 @@ namespace Yemekhane.Business.Services.Implementations
             }
         }
 
-        // ✅ JOIN'li istatistik
+        //  JOIN'li istatistik
         public IEnumerable<SuggestionStatDto> GetSuggestionStats(DateTime? from = null, DateTime? to = null)
         {
-            // Tarih filtresi meal'lere uygulanır (opsiyonel)
+            // Tarih filtresi meal'lere uygulanır 
             var mealsQ = _db.Meals.AsQueryable();
             if (from.HasValue) mealsQ = mealsQ.Where(m => m.Date >= from.Value.Date);
             if (to.HasValue) mealsQ = mealsQ.Where(m => m.Date <= to.Value.Date);

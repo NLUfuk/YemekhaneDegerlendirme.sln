@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Yemekhane.Business.DTOs;
+﻿using Yemekhane.Business.DTOs;
 using Yemekhane.Entities;
 
 namespace Yemekhane.Business.Services.Interfaces
@@ -10,7 +8,7 @@ namespace Yemekhane.Business.Services.Interfaces
         IEnumerable<MealSuggestion> GetSuggestions();
         bool VoteSuggestion(string mealName, int userId);
 
-        // ✅ Yeni: İstatistik üret
+        //  İstatistik üretimi
         IEnumerable<SuggestionStatDto> GetSuggestionStats(DateTime? from = null, DateTime? to = null);
     }
 }

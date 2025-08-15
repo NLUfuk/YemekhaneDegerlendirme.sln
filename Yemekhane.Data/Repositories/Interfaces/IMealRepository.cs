@@ -12,4 +12,6 @@ public interface IMealRepository
     IEnumerable<Meal> GetMealsForWeek(DateTime weekStart); // Pazartesi-bazlı liste
     void Update(Meal meal);
     bool Delete(int id);
+
+    bool ExistsByNameAndDate(string name, DateTime date);
 }

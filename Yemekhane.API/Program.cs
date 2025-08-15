@@ -1,18 +1,16 @@
-// Program.cs (Yemekhane.API)
-
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-
-
+using Yemekhane.Business.Common;
 using Yemekhane.Business.Services.Implementations;
 using Yemekhane.Business.Services.Interfaces;
 using Yemekhane.Data;
 using Yemekhane.Data.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Yemekhane.API.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +21,10 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile(new MealSuggestionProfile());
     cfg.AddProfile(new RatingProfile());
     cfg.AddProfile(new UserProfile());
-});    
-  
+});
+
+
+
 
 
 //  Controllers + Swagger
@@ -39,13 +39,28 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 //  Repository'ler (tek namespace: Yemekhane.Data.Repositories)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMealRepository, MealRepository>();
-builder.Services.AddScoped<IRatingRepository, RatingRepository>();  
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<ISuggestionRepository, SuggestionRepository>();
 
 //  Servisler
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<ISuggestionService, SuggestionService>();
+
+//Notification Common Service   //INotificationContext enjeksiyonunu yapabilmek için eklendi hatalar tek yerde toplansýn diye
+builder.Services.AddScoped<INotificationContext, NotificationContext>();
+
+//Dto Validator Baðlantýsý
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Yemekhane.Business.DTOs.Validators.RatingDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Yemekhane.Business.DTOs.Validators.MealDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Yemekhane.Business.DTOs.Validators.MealSuggestionDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Yemekhane.Business.DTOs.Validators.SuggestionStatDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Yemekhane.Business.DTOs.Validators.UserDtoValidator>();
+
+//Noftification Filter( tek yetrde toplamak için )
+builder.Services.AddControllers(options => { options.Filters.Add<ModelStateToNotificationFilter>(); });
+
 
 //  JWT Authentication (appsettings.json -> Jwt:Key)
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "DEV-KEY-CHANGE-ME";
@@ -96,12 +111,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-//#if DEBUG
-//var mapper = app.Services.GetRequiredService<IMapper>();
-//mapper.ConfigurationProvider.AssertConfigurationIsValid(); // sorun varsa burada yazar
-//#endif
 
-// use SeedData.Initialize(app.Services); // veritabanýný seed et
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -114,11 +124,15 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-// 6) Pipeline
+// Pipeline Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Yemekhane API v1");
+        options.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+    });
 }
 
 

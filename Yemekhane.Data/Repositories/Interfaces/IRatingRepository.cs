@@ -7,4 +7,7 @@ public interface IRatingRepository
     void Add(Rating rating);
     double GetAverageRatingForMeal(int mealId);
     bool HasUserRatedMeal(int mealId, int userId);
+
+
+    
 }

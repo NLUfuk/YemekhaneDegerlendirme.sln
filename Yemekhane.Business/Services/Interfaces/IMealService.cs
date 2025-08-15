@@ -16,11 +16,7 @@ namespace Yemekhane.Business.Services.Interfaces
 
 
 
-        //IEnumerable<MealDto> GetAll();
-        //MealDto GetById(int id);
-        //void Add(MealDto dto);
-        //void Update(MealDto dto);
-        //void Delete(int id);
+        
 
     }
 }

@@ -33,7 +33,7 @@ namespace Yemekhane.API.Controllers
             return Ok(new { user.Id, user.UserName });
         }
 
-        // herkes erişebilsin
+        // HERKES ERİŞEBİLSİN, ADMIN İÇİN ÖZELLEŞTİRMEK GEREKİYORSA
         [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDto dto)

@@ -10,7 +10,7 @@ public class MealSuggestionProfile : Profile
         CreateMap<MealSuggestion, MealSuggestionDto>().ReverseMap()
             .ForMember(d => d.Id, opt => opt.Ignore()); // identity ise
 
-        //// Oy verme için istek DTO'su kullanıyorsan (opsiyonel)
+        //// Oy verme için request DTO'su kullanıyorsan (opsiyonel)
         //CreateMap<SuggestionVoteDto, MealSuggestion>()  // genelde kullanılmaz
         //    .ForAllMembers(opt => opt.Ignore());        // güvenlik: map etme
     }

@@ -10,7 +10,7 @@ public class UserProfile : Profile
 
         CreateMap<UserDto, User>()
             .ForMember(d => d.Id, opt => opt.Ignore())
-            .ForMember(d => d.PasswordHash, opt => opt.Ignore()) // hassas alan
+            .ForMember(d => d.PasswordHash, opt => opt.Ignore()) 
             .ForMember(d => d.Ratings, opt => opt.Ignore()) // navigation
             .ForAllMembers(opt => opt.Condition((src, dest, val) => val != null));
     }
